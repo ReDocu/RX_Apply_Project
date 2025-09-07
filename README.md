@@ -1,11 +1,30 @@
-## 1부 VR에 필요한 기능 탐방하기
+## 1부 VR 방탈출 게임 학습자료
 
-- 1부 최종 결과물
+![image](./post_image/VR_EscapeRoom.png)
 
-![image](./post_image/VR_02_1일차_결과.png)
+### 기능 리스트
+- VR 콘텐츠 Hand Socket을 활용해서 손 사용하기
+- 손으로 사물 물리적으로 던지기
+- 전방 물체 확인(윤곽선)해서 끌어오기
+- 기믹 만드는 환경 조성하기
+- 버튼 기믹 만들기
+- 서랍 기믹 만들기 (백터의 내적)
+- 잡은 물체 인벤토리에 넣기
+- 인벤토리 세팅하기
 
+---
+[1. VR Template 탐방하기](#1.-VR-Template-탐방하기)
+[2. 캐릭터 움직임 및 GrabComponent를 통해, 사물 던지기 동적으로 바꾸기](#2.-캐릭터-움직임-및-GrabComponent를-통해,-사물-던지기-동적으로-바꾸기)
+3. 소켓을 이용한 손동작 애니메이션 추가하기](#3.-소켓을-이용한-손동작-애니메이션 추가하기)
+[4. 물체 충돌체크](#4.-물체-충돌체크)
+[5. 기믹(Gimmick) 만들기](#5.-기믹(Gimmick)-만들기)
+[6. 인벤토리 만들기](#6.-인벤토리-만들기)
+
+---
 ### 1. VR Template 탐방하기
  
+![image](./post_image/VR_02_1일차_결과.png)
+
 - VR Template 들어가서 이것저것 파악해보기
 - VRPawn [플레이어]
   - Begin Play 
@@ -167,6 +186,8 @@
 - [과제] 마켓 플레이스에서 총기 및 아이템을 들고와 원하는 모션을 구현해 봅시다.
 
 ### 4. 물체 충돌체크 
+
+![image](./post_image/VR_02_3일차 결과.png)
 
 - 전방에 있는 물체 충돌체크하기
   - Function Library 만들기
@@ -377,3 +398,46 @@
     ![image](./post_image/VR_03_2-12.png)
     - Actor Disable [삭제하지 않고, 어딘가에 보관해 놓기]
     ![image](./post_image/VR_03_2-13.png)
+
+- 특정 아이템을 먹으면 문이 열리는 콘텐츠를 구현해봅시다.
+  - VR에 TakeItem Bind 추가하기
+  ![image](./post_image/VR_03_2-14.png)
+  - Gimmick 블루프린트
+  ![image](./post_image/VR_03_2-15.png)
+  - BP_Inven에 FindItem 추가하기
+  ![image](./post_image/VR_03_2-16.png)
+
+- 블루프린트 만들기
+  - WB_ItemList
+  - WB_ItemObjectListEntry
+
+  - WB_ItemObjectListEntry - Class Setting으로 오버라이드 해주기
+    - 변수
+      - ItemData : ST Item Type
+      - Select : Boolean
+    ![image](./post_image/VR_03_3-1.png)
+    - 오버라이드 한 함수로 값 설정해주기
+      - 선택한 객체 색깔 미리 저장해주기
+  
+  - WB_ItemList
+    - TileView 세팅해주기
+    ![image](./post_image/VR_03_3-2.png)
+    - 함수 생성하기 [Tile 리셋 이후 갱신하는 Update]
+    ![image](./post_image/VR_03_3-3.png)
+    - WB_ItemList에서 버튼 설정해주기
+    ![image](./post_image/VR_03_3-4.png)
+   
+  - VRPawn
+    - UpdateInvenWidget 세팅해주기
+    ![image](./post_image/VR_03_3-5.png)
+    - SelectItem : ST Item Type 변수 추가하기
+    - Set Select Item 생성 이후 버튼 클릭시 Select 되도록 선정하기
+    ![image](./post_image/VR_03_3-6.png)
+    - 추가하기
+    ![image](./post_image/VR_03_3-7.png)
+
+- 선택한 아이템 출력하기
+  - [ActorDisable] VRPawn Actor 위치 설정하는 곳 [ActorDisable] 에서 위치값 조정해주기
+  ![image](./post_image/VR_03_3-8.png)
+  - SpawnItem 함수 만들기
+  ![image](./post_image/VR_03_3-9.png)
