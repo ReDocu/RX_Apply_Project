@@ -1,6 +1,4 @@
-# RX_Apply_Project
-
-## VR 강의용 콘텐츠
+## 1부 VR에 필요한 기능 탐방하기
 
 - 1부 최종 결과물
 
@@ -248,3 +246,134 @@
       - TryGrabRight/Left 에서 Return Node 세팅해주기
       ![image](./post_image/VR_02_3-20.png)
     
+# 5. 기믹(Gimmick) 만들기
+
+![image](./post_image/VR_03_1일차_01.png)
+
+- 기믹 환경 만들어보기
+  - BP_Door 구성하기
+  - Static Mesh 설정하기 
+  - TimeLine 만들기- 문에 대한 설정 조정하기
+  ![image](./post_image/VR_03_1-1.png)
+
+  - BP_Gimmick 만들기
+    - IsComplete : boolean 변수만들기
+    - Event Dispatcher 구성하기 : QuestComplete
+    ![image](./post_image/VR_03_1-2.png) 
+
+  - BP_GimmickComponent 만들기
+    - BP_Gimmick을 담고 있는 컴포넌트 생성하기
+    - 컴포넌트에 있는 Complete 확인하여 클리어 구현하기
+    ![image](./post_image/VR_03_1-3.png)
+
+  - BP_Door에서 BP_GimmickComponent 연결하기
+    - QuestComplete를 실행할 때마다 문이 열릴 수 있는 결과 확인하기
+    ![image](./post_image/VR_03_1-4.png)
+
+  - BP_SubGimmick
+    - Box 만들고, Casting을 이용해 객체 필터링해서 OnCheckQuest 만들기
+    ![image](./post_image/VR_03_1-5.png)
+
+- Resources - Gimmicks 가져오기
+  - 리소스 가져오기
+
+![image](./post_image/VR_03_1-9.png)
+
+- 버튼 만들기
+  - BP_Gimmick 자식으로 BP_PhysicsButton 생성
+  - 컴포넌트 구성 - Button - Box Collision
+  - BoxCollision[Collision Preset - OverlapAllDynamic]
+  - OnComponentBeginOverlap / OnComponentOverlap
+  - TimeLine 만들기
+    - ButtonTimeline을 더블 클릭하여 Float Track 추가
+    - Key 0: Time = 0.0, Value = 0.0
+    - Key 1: Time = 0.1, Value = 1.0
+  - Lerp(기본 위치, 눌린 위치, Timeline 값)
+  - 변수 구성
+    - InitialLocation : Vector
+    - PressedOffset : Vector
+  - Event Begin Play - Set InitialLocation = ButtonMesh.WorldLocation
+  - OnComponentBeginOverlap (Box Collision)
+    - Play (ButtonTimeline)
+  - OnComponentEndOverlap (Box Collision)
+    - Reverse (ButtonTimeline)
+  - ButtonTimeline Update
+    - Set ButtonMesh.WorldLocation = Lerp(InitialLocation, InitialLocation - (0,0,5), Timeline Alpha)
+    ![image](./post_image/VR_03_1-6.png)
+
+- 서랍 만들기
+  - SkeletalMesh 만들기
+  - 소켓 생성하기
+  - SkeletalMesh - GrabComponent 세팅하기
+  - 변수 만들기
+    - Grabbed : boolean
+    - GrabLocation : Vector
+  - 초기값 세팅하기
+  ![image](./post_image/VR_03_1-7.png)
+  - Grab 해서 내적을 통해 앞쪽으로 움직이는 손을 움직이기
+  ![image](./post_image/VR_03_1-8.png)
+  - Widget을 이용하여 힌트만들기
+  ![image](./post_image/VR_03_1-10.png)
+
+# 6. 인벤토리 만들기
+
+- Widget 관리하기
+  - UI 모드를 전환할 수 있는 Menu에서의 코드 가져오기
+    - MotionController 변수 만들어주기
+    - BeginPlay
+    ![image](./post_image/VR_03_2-1.png)
+      - EnableInput
+      - Add Mapping Context
+      - SetWidget Interaction Reference
+    - ClosePad
+    ![image](./post_image/VR_03_2-2.png)
+    - IA_Menu_Interact_[Left/Right]_Pressed
+    ![image](./post_image/VR_03_2-3.png)
+    - 지속적으로 플레이어를 바라보게 하기
+    ![image](./post_image/VR_03_2-4.png)
+  - VRPawn에서 Toggle Menu 바꿔주기
+    ![image](./post_image/VR_03_2-5.png)
+    - 오른쪽 왼쪽에 따른 구분 지어주기
+    - Pad로 돌아와 Pad가 바라보는 방향 지정해주기
+    - Pad 껐다 키면서 Show Debug 설정해주기
+  - Password Widget 생성 이후, Password 입력 Gimmick 만들기
+    - Widget 구성하기
+    ![image](./post_image/VR_03_2-6.png)
+    - 버튼 구성하기
+    ![image](./post_image/VR_03_2-7.png)
+    - 텍스트 조정하는 함수 만들기
+    ![image](./post_image/VR_03_2-8.png)
+    - 형태 구성하기
+    ![image](./post_image/VR_03_2-9.png)
+    - 디스패처 연결하기
+    ![image](./post_image/VR_03_2-10.png)
+
+- 아이텝 집고 넣기
+  - 현재 집고 있는 GrabComponent Actor 가져오기 및 세팅해주기
+  ![image](./post_image/VR_03_2-11.png)
+    - CurrentGrabComponentLeft : GrabComponent
+    - CurrentGrabComponentLeft : GrabComponent
+    - 변수 세팅해주기
+    - 초기화도 해주기
+    - Pulled도 세팅했기 때문에 같이 해주기
+  - Input 추가하기
+    - IA_Grab_Take_Left : A
+    - IA_Grab_Take_Right : X 
+    - Default에 넣어주기
+  - GrabComponent에 아이템 타입 설정하기
+    - E_ItemType
+      - 아이템 타입
+    - ST_ItemType
+      - Name : String
+      - Actor : Actor
+      - type : E_ItemType
+    - GrabComponent에 E_ItemType 변수 추가하기
+  - BP_Inven_Component
+    - Slot : ST_ItemType - Array
+    - 아이템 추가하기 : AddItem
+    - 아이템 삭제하기 : RemoveItem
+  - VRPawn 세팅하기
+    - TakeItem
+    ![image](./post_image/VR_03_2-12.png)
+    - Actor Disable [삭제하지 않고, 어딘가에 보관해 놓기]
+    ![image](./post_image/VR_03_2-13.png)
